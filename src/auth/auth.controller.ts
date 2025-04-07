@@ -1,5 +1,14 @@
-import { Body, Controller, Get, Headers, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Headers,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
+import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -12,6 +21,16 @@ export class AuthController {
   @Get('users')
   getAllUsers() {
     return this.usersService.getAllUsers();
+  }
+
+  @Get('loginUsers')
+  @UseGuards(AuthGuard) // 需要登入驗證才能使用
+  getCurrentUser(@Req() req) {
+    // req.user 是從 token 解出來的 payload（上面 guard 放進去的）
+    return {
+      message: '已登入的使用者資料',
+      user: req.user,
+    };
   }
 
   // 接收 email 和 password，呼叫 AuthService.register() 註冊使用者。
