@@ -14,8 +14,12 @@ export class UsersService {
     return this.userModel.create({ email, password: hashedPassword });
   }
 
-// 根據 Email 查詢使用者，若找不到則回傳 null。
+  // 根據 Email 查詢使用者，若找不到則回傳 null。
   async findByEmail(email: string): Promise<User | null> {
     return this.userModel.findOne({ email }).exec();
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return this.userModel.find().exec();
   }
 }

@@ -1,9 +1,18 @@
-import { Body, Controller, Headers, Post } from '@nestjs/common';
+import { Body, Controller, Get, Headers, Post } from '@nestjs/common';
+import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private usersService: UsersService,
+  ) {}
+
+  @Get('users')
+  getAllUsers() {
+    return this.usersService.getAllUsers();
+  }
 
   // 接收 email 和 password，呼叫 AuthService.register() 註冊使用者。
   @Post('register')
