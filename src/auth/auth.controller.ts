@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Headers, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -15,5 +15,14 @@ export class AuthController {
   @Post('login')
   login(@Body() body: { email: string; password: string }) {
     return this.authService.login(body.email, body.password);
+  }
+
+  @Post('logout')
+  logout(@Headers('authorization') authHeader: string) {
+    if (!authHeader) {
+      return { message: 'No token provided' };
+    }
+    const token = authHeader.replace('Bearer ', '');
+    return this.authService.logout(token);
   }
 }

@@ -5,6 +5,8 @@ import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuthService {
+  private blacklistedTokens: string[] = []; // 儲存黑名單的 JWT（簡單做法）
+
   constructor(private usersService: UsersService) {}
 
   // 呼叫 UsersService.createUser() 來建立新使用者。
@@ -13,7 +15,6 @@ export class AuthService {
   }
 
   async login(email: string, password: string) {
-
     // 先透過 findByEmail() 檢查使用者是否存在。
     const user = await this.usersService.findByEmail(email);
     if (!user) throw new UnauthorizedException('User not found');
@@ -25,5 +26,14 @@ export class AuthService {
     // 使用 jsonwebtoken 產生 JWT，回傳給前端。
     const token = jwt.sign({ email }, 'secret', { expiresIn: '1h' });
     return { token };
+  }
+
+  logout(token: string) {
+    this.blacklistedTokens.push(token); // 加入黑名單
+    return { message: 'Logged out successfully' };
+  }
+
+  isTokenBlacklisted(token: string): boolean {
+    return this.blacklistedTokens.includes(token);
   }
 }
